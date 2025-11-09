@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>annex_1.knit</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Hippocampus BCN</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="registres.html">Registres Hippocampus al Barcelonès</a>
+</li>
+<li>
+  <a href="annex_1.html">Annex Observacions</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+
+</div>
+
+
+<div id="section" class="section level1">
+<h1>—</h1>
+</div>
+<div id="title-annex-observacions" class="section level1">
+<h1>title: “Annex OBservacions”</h1>
+</div>
+<div id="output" class="section level1">
+<h1>output:</h1>
+</div>
+<div id="html_document" class="section level1">
+<h1>html_document:</h1>
+</div>
+<div id="css-styles.css" class="section level1">
+<h1>css: styles.css</h1>
+</div>
+<div id="section-1" class="section level1">
+<h1>—</h1>
+</div>
+<div id="section-2" class="section level1">
+<h1></h1>
+</div>
+<div
+id="r-setup-includefalse-knitropts_chunksetecho-false-evaltrue-warningfalse-message-false-quiet-false-cachefalse"
+class="section level1">
+<h1><code>{r setup, include=FALSE} # knitr::opts_chunk$set(echo = FALSE, eval=TRUE, warning=FALSE , message =FALSE, quiet = FALSE, cache=FALSE  ) #</code></h1>
+</div>
+<div
+id="r-rminka3-echofalse-devtoolsinstall_githubhttpsgithub.comdevelopment-biomarinerminkav3.git-libraryrminkav3-librarysf-libraryleaflet-librarydplyr-librarylubridate-libraryggplot2-librarydt-librarybase64enc-libraryhtmltools-libraryhtmlwidgets-libraryhttr-librarykableextra-libraryleafpop"
+class="section level1">
+<h1><code>{r rminka3 , echo=FALSE} #  # devtools::install_github("https://github.com/Development-BioMarine/rminkav3.git") #  # library(rminkav3) # library(sf) # library(leaflet) # library(dplyr) # library(lubridate) # library(ggplot2) # library(DT) # library(base64enc) # library(htmltools) # library(htmlwidgets) # library(httr) # library(kableExtra) # library(leafpop) #</code></h1>
+</div>
+<div
+id="r-funcions-echofalse-extensio--st_bbox-cxmin-2.033843994-xmax2.274169921-ymin41.18485540-ymax41.538393967crs4326-extensio_bcn--st_as_sfcextensio-bounds---c41.184855402.033843994-41.538393967-2.274169921-observ--data.framerminkav3get_minka_obsqueryhippocampus-bounds-bounds-per-incloure-l-imatge-contenido---sapplyobservimage_url-functionxpaste0dataimagetoolsfile_extx-base64base64encodex-observ---cbindobservcontenido-imatge---sapplyobservimage_urlfunctionxhtmlpaste0img-srcx-width100-height100-observ---cbindobservimatge-per-incloure-el-link-observid_link-as.characterhtmltoolsaobservidhrefobservurltarget_blank-captive--filterobservcaptive_cultivatedtrue-funcio-per-filtrar-les-dades-de-minka---------------------------------------------------observ_minka---functionespecie-observ2---filterobservscientific_name-especie-df_especie---mutateobserv2-latitut-as.numericlatitudelongitutas.numericlongitude-df_sin_na1---subsetdf_especie-is.nalatitut-df_distrib---subsetdf_sin_na1-is.nalongitut-year---yeardf_distribobserved_on-namesyear---year-df_distrib---cbind-df_distribyear-month---monthdf_distribobserved_on-namesmonth---month-df_distrib---cbinddf_distribmonth-df_distribmonth---factordf_distribmonth-levels-112-labels-cgener-febrer-març-abrilmaigjunyjuliolagostsetembreoctubre-novembredecembre-return-df_distrib"
+class="section level1">
+<h1><code>{r funcions , echo=FALSE} #  # extensio&lt;- st_bbox( c(xmin =2.033843994, xmax=2.274169921, ymin=41.18485540, ymax=41.538393967),crs=4326) #  # extensio_bcn &lt;-st_as_sfc(extensio) #  # bounds &lt;- c(41.18485540,2.033843994, 41.538393967, 2.274169921) #  # observ &lt;-data.frame(rminkav3::get_minka_obs(query="Hippocampus" , bounds = bounds)) #  # #Per incloure l imatge #  #     contenido &lt;- sapply(observ$image_url, function(x){paste0("data:image/",tools::file_ext(x), ";base64,",base64encode(x))}) #  #     observ &lt;- cbind(observ,contenido) #  #     imatge &lt;- sapply(observ$image_url,function(x){HTML(paste0("&lt;img src='",x,"' width='100' height='100'&gt;"))}) #  #     observ &lt;- cbind(observ,imatge) #         #         #Per incloure el link  #          #           # observ$ID_Link&lt;-as.character(htmltools::a(observ$id,href=observ$url,target="_blank")) #  #                          # captive &lt;-filter(observ,captive_cultivated=="true") #  # #Funcio per filtrar les dades de Minka-------------------------------------------------- #  # Observ_Minka &lt;- function(especie){ #  #     observ2 &lt;- filter(observ,scientific_name == especie) #  #     df_especie &lt;- mutate(observ2, latitut= as.numeric(latitude),longitut=as.numeric(longitude)) #  #     df_sin_na1 &lt;- subset(df_especie, !is.na(latitut)) #  #     df_distrib &lt;- subset(df_sin_na1, !is.na(longitut)) #  #     year &lt;- year(df_distrib$observed_on ) #  #     names(year) &lt;- "year" #  #     df_distrib &lt;- cbind( df_distrib,year) #  #     month &lt;-  month(df_distrib$observed_on) #  #     names(month) &lt;- "month" #  #     df_distrib &lt;- cbind(df_distrib,month) #  #     df_distrib$month &lt;- factor(df_distrib$month, levels = 1:12, labels =c("Gener", "Febrer", "Març", #                                                                           "Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre", "Novembre","Decembre")) #  #     return (df_distrib) #  # } #  #</code></h1>
+</div>
+<div id="section-3" class="section level1">
+<h1></h1>
+</div>
+<div id="diagrama-d-observacions-captives-sobre-el-total"
+class="section level1">
+<h1>#### Diagrama d observacions captives sobre el total</h1>
+</div>
+<div id="section-4" class="section level1">
+<h1></h1>
+</div>
+<div
+id="r-diagrama_sector-evaltrue-warningfalse-message-false-quiet-false-cachefalse"
+class="section level1">
+<h1>```{r diagrama_sector, eval=TRUE, warning=FALSE , message =FALSE,
+quiet = FALSE, cache=FALSE }</h1>
+</div>
+<div id="section-5" class="section level1">
+<h1></h1>
+</div>
+<div id="leaflet" class="section level1">
+<h1>leaflet() %&gt;%</h1>
+</div>
+<div
+id="addprovidertilesprovidersesri.worldstreetmapgroup-wsmworld-street-map-addprovidertilesprovidersesri.worldimagerygroup-satel.lit"
+class="section level1">
+<h1>addProviderTiles(providers<span
+class="math inline">\(Esri.WorldStreetMap,group = &quot;WSMWorld Street
+Map&quot;) %&gt;%
+#             addProviderTiles(providers\)</span>Esri.WorldImagery,group
+= “Satel.lit”) %&gt;%</h1>
+</div>
+<div id="section-6" class="section level1">
+<h1></h1>
+</div>
+<div id="section-7" class="section level1">
+<h1></h1>
+</div>
+<div id="addlayerscontrolbasegroups-cworld-street-map-satel.lit"
+class="section level1">
+<h1>addLayersControl(baseGroups = c(“World Street Map”,
+“Satel.lit”))%&gt;%</h1>
+</div>
+<div id="section-8" class="section level1">
+<h1></h1>
+</div>
+<div id="section-9" class="section level1">
+<h1></h1>
+</div>
+<div id="addmarkersdata-captive" class="section level1">
+<h1>addMarkers(data = captive,</h1>
+</div>
+<div id="group-dades_captive" class="section level1">
+<h1>group = “dades_captive”,</h1>
+</div>
+<div id="lng-captivelongitude-lat-captivelatitude"
+class="section level1">
+<h1>lng = captive<span class="math inline">\(longitude,
+#                        lat =  captive\)</span>latitude,</h1>
+</div>
+<div
+id="popup-paste0link-observació-idcaptiveida-brobservador-captiveuser_login"
+class="section level1">
+<h1>popup = ~paste0(“Link
+observació:”,‘<a href= "',captive$url,'" target="_blank">’,
+‘ID’,captive<span class="math inline">\(id,&#39;&lt;/a&gt;&#39;,
+#                                        &#39;&lt;br&gt;&#39;,&quot;Observador:
+&quot;,captive\)</span>user_login,</h1>
+</div>
+<div
+id="datacaptiveobserved_on-br-options-markeroptionsdraggable-false-addpopupimagescaptiveimage_urlgroup-dades_captive-width-150"
+class="section level1">
+<h1>‘<br>’,“Data:”,captive<span class="math inline">\(observed_on,
+#                                        &#39;&lt;br&gt;&#39;),
+#                        options = markerOptions(draggable = FALSE))
+%&gt;%
+#
+#             addPopupImages(captive\)</span>image_url,group =
+“dades_captive”, width = 150)</h1>
+</div>
+<div id="section-10" class="section level1">
+<h1></h1>
+</div>
+<div id="section-11" class="section level1">
+<h1></h1>
+</div>
+<div id="section-12" class="section level1">
+<h1></h1>
+</div>
+<div id="section-13" class="section level1">
+<h1></h1>
+</div>
+<div id="nova-columna-amb-enllços" class="section level1">
+<h1># Nova columna amb enllços</h1>
+</div>
+<div id="section-14" class="section level1">
+<h1></h1>
+</div>
+<div id="df--data.frameid-captiveid-imatgecaptiveimatge"
+class="section level1">
+<h1>df&lt;- data.frame(“ID”= captive<span class="math inline">\(id,
+#                                     &quot;Imatge&quot;=captive\)</span>imatge,</h1>
+</div>
+<div id="data-captiveobserved_on-observadorcaptiveuser_login"
+class="section level1">
+<h1>“Data”= captive<span class="math inline">\(observed_on,
+#                                     &quot;Observador&quot;=captive\)</span>user_login,</h1>
+</div>
+<div id="urlcaptiveurl-especiecaptivescientific_name"
+class="section level1">
+<h1># “URL”=captive<span class="math inline">\(url,
+#                                     &quot;Especie&quot;=captive\)</span>scientific_name)</h1>
+</div>
+<div id="section-15" class="section level1">
+<h1></h1>
+</div>
+<div id="no-mostrem-url-sense-enllaç" class="section level1">
+<h1># No mostrem URL sense enllaç</h1>
+</div>
+<div id="section-16" class="section level1">
+<h1></h1>
+</div>
+<div id="df_final---subsetdf-select-cimatge-especieobservadordata"
+class="section level1">
+<h1>df_final &lt;- subset(df, select = c(Imatge,
+Especie,Observador,Data))</h1>
+</div>
+<div id="section-17" class="section level1">
+<h1></h1>
+</div>
+<div id="divclass-mi-tabla" class="section level1">
+<h1>div(class = “mi-tabla”,</h1>
+</div>
+<div id="section-18" class="section level1">
+<h1></h1>
+</div>
+<div id="kabledf_finalescape-falsealign-cc-ccc" class="section level1">
+<h1>kable(df_final,escape = FALSE,align = c(“c”, “c”,“c”,“c”)))</h1>
+</div>
+<div id="section-19" class="section level1">
+<h1></h1>
+</div>
+<div id="section-20" class="section level1">
+<h1></h1>
+</div>
+<div id="section-21" class="section level1">
+<h1></h1>
+</div>
+<div id="section-22" class="section level1">
+<h1></h1>
+</div>
+<div id="escape-false" class="section level1">
+<h1># escape = FALSE,</h1>
+</div>
+<div id="filter-top-filtros-en-la-parte-superior-de-la-tabla"
+class="section level1">
+<h1># filter = ‘top’, # Filtros en la parte superior de la tabla</h1>
+</div>
+<div id="options-list" class="section level1">
+<h1># options = list(</h1>
+</div>
+<div id="pagelength-50-mostrar-5-filas-por-página"
+class="section level1">
+<h1># pageLength = 50, # Mostrar 5 filas por página</h1>
+</div>
+<div id="lengthmenu-c-10-15-20-opciones-de-filas-por-página"
+class="section level1">
+<h1># #lengthMenu = c( 10, 15, 20), # Opciones de filas por página</h1>
+</div>
+<div
+id="dom-lfrtip-orden-de-los-elementos-de-la-tabla-filtrado-longitud-información-etc."
+class="section level1">
+<h1># dom = ‘lfrtip’ # Orden de los elementos de la tabla (filtrado,
+longitud, información, etc.)</h1>
+</div>
+<div id="section-23" class="section level1">
+<h1># ),</h1>
+</div>
+<div id="rownames-false-no-mostrar-los-números-de-fila"
+class="section level1">
+<h1># rownames = FALSE # No mostrar los números de fila</h1>
+</div>
+<div id="section-24" class="section level1">
+<h1># )</h1>
+</div>
+<div id="section-25" class="section level1">
+<h1></h1>
+</div>
+<div id="section-26" class="section level1">
+<h1></h1>
+<p>```</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

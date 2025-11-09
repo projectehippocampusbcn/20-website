@@ -1,8 +1,14 @@
 name: "my-website"
 navbar:
-  title: "My Website"
+  title: "Hippocampus BCN"
   left:
     - text: "Home"
       href: index.html
+    - text: "Registres Hippocampus al Barcelonès"
+      href: registres.html
+    - text: "Annex Observacions"
+      href: annex_1.html
     - text: "About"
       href: about.html
+
+

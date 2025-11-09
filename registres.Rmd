@@ -1,0 +1,174 @@
+---
+title: "Registres Hippocampus Barcelonès"
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval=TRUE, warning=FALSE , message =FALSE, quiet = FALSE, cache=FALSE  )
+```
+```{r rminka3 , echo=FALSE}
+
+devtools::install_github("https://github.com/Development-BioMarine/rminkav3.git")
+
+library(rminkav3)
+library(sf)
+library(leaflet)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(DT)
+
+```
+```{r funcions , echo=FALSE}
+
+extensio<- st_bbox( c(xmin =2.033843994, xmax=2.274169921, ymin=41.18485540, ymax=41.538393967),crs=4326)
+
+extensio_bcn <-st_as_sfc(extensio)
+
+bounds <- c(41.18485540,2.033843994, 41.538393967, 2.274169921)
+
+observ <-data.frame(rminkav3::get_minka_obs(query="Hippocampus" , bounds = bounds))
+
+n_observacions <- nrow(observ)
+
+captive <-filter(observ,captive_cultivated=="true")
+
+n_captive <-nrow(filter(observ,captive_cultivated=="true"))
+
+n_free <-n_observacions-n_captive
+
+#Funcio per filtrar les dades de Minka--------------------------------------------------
+
+Observ_Minka <- function(especie){
+
+    observ2 <- filter(observ,scientific_name == especie)
+
+    df_especie <- mutate(observ2, latitut= as.numeric(latitude),longitut=as.numeric(longitude))
+
+    df_sin_na1 <- subset(df_especie, !is.na(latitut))
+
+    df_distrib <- subset(df_sin_na1, !is.na(longitut))
+
+    year <- year(df_distrib$observed_on )
+
+    names(year) <- "year"
+
+    df_distrib <- cbind( df_distrib,year)
+
+    month <-  month(df_distrib$observed_on)
+
+    names(month) <- "month"
+
+    df_distrib <- cbind(df_distrib,month)
+
+    df_distrib$month <- factor(df_distrib$month, levels = 1:12, labels =c("Gener", "Febrer", "Març",
+                                                                          "Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre", "Novembre","Decembre"))
+
+    return (df_distrib)
+
+}
+
+```
+## FONT DE LES DADES
+
+[MINKA](https://minka-sdg.org) és una plataforma comunitària oberta de ciencia ciutadana dedicada a la recol·lecció de dades ambientals i de biodiversitat , que conté una de les bases de dades més importants d'espècies marines mediterrànies. 
+En total es tenen `r n_observacions` observacions de Hippocampus efectuades entre 2017 i,  `r lubridate::year(now())` en l´àrea de Barcelona.
+
+D´aquestes observacions  `r n_captive` apareixen en la plataforma com a captives.
+Es pot comprobar que en el llistat d Hippocampus captius la majoria pertanyen a [Underwater Barcelona Dive Center](https://underwaterbarcelona.com/). Aquest centre no te permís per manipular animals captius; per tan es tracta d un error al entrar les dades i es cosideraran com a exemplars en llibertat.
+
+Cal tindre també en compte que les observacions que els falta algun item( data, localitzacio, fotografia), es cataloguen com a CASUAL.
+Degut a que nomes interesen les dades a efectes informatius de la quantitat d individus , també es tindran en compte.
+
+
+#### Diagrama d observacions captives sobre el total
+
+```{r diagrama_sector, eval=TRUE, warning=FALSE , message =FALSE, quiet = FALSE, cache=FALSE }
+
+ observ_cap <- observ %>% group_by(captive_cultivated)  %>% summarise( n_captive = n())
+
+
+    ggplot(observ_cap, aes(x="", y =n_captive, fill=captive_cultivated))+
+        geom_bar(stat = "identity",width = 1) +
+        coord_polar("y", start = 0)+
+        geom_text(aes(label = n_captive), position= position_stack(vjust =0.5),size = 4) +
+        theme_void()
+    
+    observ_cap_esp <-  observ %>% filter(captive_cultivated =="true") %>%
+                                   group_by(scientific_name)  %>% summarise( n_especie = n())
+
+
+    ggplot(observ_cap_esp, aes(x="", y =n_especie, fill=scientific_name))+
+        geom_bar(stat = "identity",width = 1) +
+        coord_polar("y", start = 0)+
+        geom_text(aes(label = n_especie), position= position_stack(vjust =0.5),size = 4) +
+        theme_void()
+
+    
+    #Diagrama apilat de les tres posibilitats
+    
+     observ2_agreg <- observ %>% group_by(scientific_name,quality_grade) %>%
+                                tally()
+
+   
+
+    ggplot(observ2_agreg, aes(x=scientific_name, y = n, fill =quality_grade))+
+        geom_bar(stat ="identity", position = "stack") +
+        geom_text(aes(label =n),position =  position_stack(vjust = 0.5),size=3)+
+        labs( x="Especie", y="Nº observacions")+
+        theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust = 1))
+    
+     
+       datatable(
+            {
+                {
+                    # Nova columna amb enllços
+
+                    df<- data.frame("ID"= captive$id,
+                                    "Data"= captive$observed_on,
+                                    "Observador"=captive$user_login,
+                                    "URL"=captive$url,
+                                    "Especie"=captive$scientific_name
+                    )
+
+                    #--------------------DataTable de les observadions de la quadricula 1x1---------------------------
+
+
+                    # Nova columna amb enllços
+
+                    df$ID_Link<- mapply(
+
+                        function(nombre, url) {
+
+                            as.character(htmltools::a(nombre, href = url,target="_blank"))
+
+                        },
+
+                        df$ID,
+
+                        df$URL
+
+                    )
+
+                    # No mostrem URL sense enllaç
+
+                    df_final <- subset(df, select = c(ID_Link, Especie,Observador,Data))
+
+                }
+
+            },
+            escape = FALSE,
+            filter = 'top',  # Filtros en la parte superior de la tabla
+            options = list(
+                pageLength = 50, # Mostrar 5 filas por página
+                #lengthMenu = c( 10, 15, 20), # Opciones de filas por página
+                dom = 'lfrtip'  # Orden de los elementos de la tabla (filtrado, longitud, información, etc.)
+            ),
+            rownames = FALSE # No mostrar los números de fila
+        )
+
+    
+    
+```   
+

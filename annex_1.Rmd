@@ -1,0 +1,148 @@
+# ---
+# title: "Annex OBservacions"
+# output: 
+#   html_document:
+#     css: styles.css
+# ---
+# 
+# ```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = FALSE, eval=TRUE, warning=FALSE , message =FALSE, quiet = FALSE, cache=FALSE  )
+# ```
+# ```{r rminka3 , echo=FALSE}
+# 
+# devtools::install_github("https://github.com/Development-BioMarine/rminkav3.git")
+# 
+# library(rminkav3)
+# library(sf)
+# library(leaflet)
+# library(dplyr)
+# library(lubridate)
+# library(ggplot2)
+# library(DT)
+# library(base64enc)
+# library(htmltools)
+# library(htmlwidgets)
+# library(httr)
+# library(kableExtra)
+# library(leafpop)
+# ```
+# ```{r funcions , echo=FALSE}
+# 
+# extensio<- st_bbox( c(xmin =2.033843994, xmax=2.274169921, ymin=41.18485540, ymax=41.538393967),crs=4326)
+# 
+# extensio_bcn <-st_as_sfc(extensio)
+# 
+# bounds <- c(41.18485540,2.033843994, 41.538393967, 2.274169921)
+# 
+# observ <-data.frame(rminkav3::get_minka_obs(query="Hippocampus" , bounds = bounds))
+# 
+# #Per incloure l imatge
+# 
+#     contenido <- sapply(observ$image_url, function(x){paste0("data:image/",tools::file_ext(x), ";base64,",base64encode(x))})
+# 
+#     observ <- cbind(observ,contenido)
+# 
+#     imatge <- sapply(observ$image_url,function(x){HTML(paste0("<img src='",x,"' width='100' height='100'>"))})
+# 
+#     observ <- cbind(observ,imatge)
+#        
+#         #Per incloure el link 
+#         
+#           # observ$ID_Link<-as.character(htmltools::a(observ$id,href=observ$url,target="_blank"))
+# 
+#                         
+# captive <-filter(observ,captive_cultivated=="true")
+# 
+# #Funcio per filtrar les dades de Minka--------------------------------------------------
+# 
+# Observ_Minka <- function(especie){
+# 
+#     observ2 <- filter(observ,scientific_name == especie)
+# 
+#     df_especie <- mutate(observ2, latitut= as.numeric(latitude),longitut=as.numeric(longitude))
+# 
+#     df_sin_na1 <- subset(df_especie, !is.na(latitut))
+# 
+#     df_distrib <- subset(df_sin_na1, !is.na(longitut))
+# 
+#     year <- year(df_distrib$observed_on )
+# 
+#     names(year) <- "year"
+# 
+#     df_distrib <- cbind( df_distrib,year)
+# 
+#     month <-  month(df_distrib$observed_on)
+# 
+#     names(month) <- "month"
+# 
+#     df_distrib <- cbind(df_distrib,month)
+# 
+#     df_distrib$month <- factor(df_distrib$month, levels = 1:12, labels =c("Gener", "Febrer", "Març",
+#                                                                           "Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre", "Novembre","Decembre"))
+# 
+#     return (df_distrib)
+# 
+# }
+# 
+# ```
+# 
+# #### Diagrama d observacions captives sobre el total
+# 
+# ```{r diagrama_sector, eval=TRUE, warning=FALSE , message =FALSE, quiet = FALSE, cache=FALSE }
+# 
+#             leaflet() %>%
+#             addProviderTiles(providers$Esri.WorldStreetMap,group = "WSMWorld Street Map") %>%
+#             addProviderTiles(providers$Esri.WorldImagery,group = "Satel.lit") %>%
+# 
+# 
+#             addLayersControl(baseGroups = c("World Street Map", "Satel.lit"))%>%
+# 
+# 
+#             addMarkers(data = captive,
+#                        group = "dades_captive",
+#                        lng = captive$longitude,
+#                        lat =  captive$latitude,
+#                        popup = ~paste0("Link observació: ",'<a href= "',captive$url,'" target="_blank">', 'ID ',captive$id,'</a>',
+#                                        '<br>',"Observador: ",captive$user_login,
+#                                        '<br>',"Data: ",captive$observed_on,
+#                                        '<br>'),
+#                        options = markerOptions(draggable = FALSE)) %>%
+# 
+#             addPopupImages(captive$image_url,group = "dades_captive", width = 150)
+#     
+# 
+#   
+#      
+#                     # Nova columna amb enllços
+# 
+#                     df<- data.frame("ID"= captive$id,
+#                                     "Imatge"=captive$imatge,
+#                                     "Data"= captive$observed_on,
+#                                     "Observador"=captive$user_login,
+#                                     # "URL"=captive$url,
+#                                     "Especie"=captive$scientific_name)
+# 
+#                     # No mostrem URL sense enllaç
+# 
+#                     df_final <- subset(df, select = c(Imatge, Especie,Observador,Data))
+#                     
+#                     div(class = "mi-tabla",
+#                 
+#                      kable(df_final,escape = FALSE,align = c("c", "c","c","c")))
+#                    
+# 
+#                                                    
+#         # 
+#         #     escape = FALSE,
+#         #     filter = 'top',  # Filtros en la parte superior de la tabla
+#         #     options = list(
+#         #         pageLength = 50, # Mostrar 5 filas por página
+#         #         #lengthMenu = c( 10, 15, 20), # Opciones de filas por página
+#         #         dom = 'lfrtip'  # Orden de los elementos de la tabla (filtrado, longitud, información, etc.)
+#         #     ),
+#         #     rownames = FALSE # No mostrar los números de fila
+#         # )
+# 
+#     
+    
+```   

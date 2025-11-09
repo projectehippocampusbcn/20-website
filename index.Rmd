@@ -1,35 +1,156 @@
 ---
-title: "My Website"
+title: "Projecte Hippocampus BCN"
+output: 
+    html_document:
+        code_folding: hide
 ---
 
 
 
+**LOCALITZACIO DEL PROJECTE**
 
-Hello, Website!
+La localització exacte del projecte es tota la franja litoral dels tres municipis del Barcelonès excloent les àrees portuaries i el espigó nou del port de Barcelona.
+Per la banda de mar es pren fins la distancia de l´isòbata dels 10 mts, senyalada en vermell en el plànol.
 
-For more information about simple R Markdown websites, please read the documentation at https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html.
+S agafen com a referencia inicial les quadricules UTM 1kmx1km. Aquestes a la vegada, per facilitar la localització i selecció de zones on es fan els transectes es dividiran en 25 quadricules de 200mts per 200mts senyalades en el planol en cyan. La codificacio d´aquestes quadricules lligada a la de la quadricula UTM 1x1 es com l exemple que segueix:
 
-Please also note that simple R Markdown sites are _not_ based on **blogdown**. They are probably good for websites with only a few Rmd documents. For larger-scale and more sophisticated websites (such as blogs), you may want to use **blogdown** instead: https://github.com/rstudio/blogdown.
 
-```{r ,  echo=FALSE, eval=TRUE, warning=FALSE , message =FALSE}
+
+En el mapa s´indiquen en les quadricules UTM 1x1 amb fons groc  on el mostreig es segur ja que que s hi han detectat mes de dos resgistres a MINKA. 
+
+
+
+
+```{r distribucio,  echo=FALSE, eval=TRUE, warning=FALSE , message =FALSE, quiet = FALSE, cache=FALSE }
 
 library(dplyr)
 library(leaflet)
+library(sf)
 
 
+xmin <-2.1843055755327567
+xmax<-2.2700285855016893
+ymin<-41.35735519073035
+ymax<-41.46065873109604
 
- leaflet()%>%
+Quadricules_200x200 <-st_read ("./Capes/Quadr_200x200_BCN_10.shp", quiet = TRUE)
 
-          addProviderTiles(providers$Esri.WorldStreetMap,group = "WSMWorld Street Map") %>%
-          addProviderTiles(providers$Esri.WorldImagery,group = "Satel.lit") 
+Quadricules_200x200_sf <- st_transform (Quadricules_200x200, crs =4326)
+
+Isobata_10_sf <- st_read ("./Capes/isobata_10.shp", quiet = TRUE)
+
+Isobata_10_sf <- st_transform (Isobata_10_sf, crs =4326)
+
+Isobata_10_sf <- st_zm(Isobata_10_sf)
+
+presencia_hippo_sf <- st_read ("./Capes/Presencia_hippocampus.shp", quiet = TRUE)
+
+presencia_hippo_sf  <- st_transform (presencia_hippo_sf, crs =4326)
+
+Quadricules_1x1 <- st_read ("./Capes/Quadr_1x1_BCN_10.shp", quiet = TRUE)
+
+Quadricules_1x1_sf <- st_transform (Quadricules_1x1, crs =4326)
 
 
+municipis_litorals_sf <-st_read ("./Capes/Municipis_BCN.shp", quiet = TRUE)
+
+      pal_mun <- rainbow (3)
+
+      paleta_muni <-colorFactor(palette = pal_mun, domain =municipis_litorals_sf$NOMMUNI)
+      
+      
+
+         leaflet()%>%
+           
+           fitBounds(lng1=xmin, lat1=ymin,lng2 = xmax, lat2 = ymax)%>%
+           
+
+                     addWMSTiles(baseUrl="https://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms", layers= "ortofoto_color_vigent",options=
+                                    WMSTileOptions(format = "image/png",transparent = TRUE )) %>%
+                                              
+
+                        
+          # addProviderTiles(providers$Esri.WorldStreetMap,group = "WSMWorld Street Map")%>%
+          # addProviderTiles(providers$Esri.WorldImagery,group = "Satel.lit") %>%
 
 
+          addPolygons(data = municipis_litorals_sf ,
+                      stroke = TRUE,
+                      smoothFactor = 0.2,
+                      fillOpacity = 0.15,
+                      fillColor =  ~paleta_muni(municipis_litorals_sf$NOMMUNI),
+                      weight = 1,
+                      color = "black",
+
+                      popup =  paste ("Municipi: ",municipis_litorals_sf$NOMMUNI,
+                                      "<br>",
+                                      "Comarca: ",municipis_litorals_sf$Comarques_,
+                                      "<br>",
+                                      "Provincia: ",municipis_litorals_sf$Comarque_1),
+
+                      group = "Municipis") %>%
 
 
+          addWMSTiles(baseUrl = "https://geoserveis.icgc.cat/servei/catalunya/batimetria/wms?", layers= "isobates_2500000", group= "Batimetria",options=
+
+                        WMSTileOptions(format = "image/png",transparent = TRUE )) %>%
+
+          addWMSTiles(baseUrl = "https://geoserveis.icgc.cat/servei/catalunya/batimetria/wms?", layers= "isobates_600000", group= "Batimetria", options=
+
+                        WMSTileOptions(format = "image/png",transparent = TRUE )) %>%
+
+          addWMSTiles(baseUrl = "https://geoserveis.icgc.cat/servei/catalunya/batimetria/wms?", layers= "isobates_300000", group= "Batimetria", options=
+
+                        WMSTileOptions(format = "image/png",transparent = TRUE )) %>%
 
 
+          addWMSTiles(baseUrl = "https://geoserveis.icgc.cat/servei/catalunya/batimetria/wms?", layers= "isobates_100000", group= "Batimetria", options=
+
+                        WMSTileOptions(format = "image/png",transparent = TRUE )) %>%
+
+          addWMSTiles(baseUrl = "https://geoserveis.icgc.cat/servei/catalunya/batimetria/wms?", layers= "isobates_5000", group= "Batimetria", options=
+
+                        WMSTileOptions(format = "image/png",transparent = TRUE )) %>%
+           
+                     addPolygons(data =Quadricules_200x200_sf,
+                      stroke = TRUE,
+                      smoothFactor = 0.2,
+                      fillOpacity = 0,
+                      weight = 1,
+                      color = "cyan",
+                      group ="Quadricula 200mx200m",
+                      popup =  paste ("Codi: ",Quadricules_200x200_sf$COD200x))%>%
+  
+          addPolygons(data =Quadricules_1x1_sf,
+                      stroke = TRUE,
+                      smoothFactor = 0.2,
+                      fillOpacity = 0,
+                      weight = 1.5,
+                      color = "blue",
+                      group ="Quadricula UTM 1kmx1km",
+                      popup =  paste ("Codi: ",Quadricules_1x1_sf$COD1X1))%>%
+           
+           addPolygons(data = presencia_hippo_sf,
+                      stroke = TRUE,
+                      smoothFactor = 0.2,
+                      fillOpacity = 0.1,
+                      fillColor = "yellow",
+                      color = "blue",
+                      weight = 4,
+                      group ="Quadricula UTM 1kmx1km",
+                      popup =  paste ("Codi: ",Quadricules_1x1_sf$COD1X1))%>%
+           
+            addPolylines(data = Isobata_10_sf,
+                      group = "Isobata 10m",
+                      stroke = TRUE,
+                      color = "red",
+                      weight = 4,
+                      opacity = 0.5)%>%
+        
+           addLayersControl(overlayGroups = c("Municipis","Quadricula UTM 1kmx1km","Quadricula 200mx200m","Batimetria", "Isobata 10m") ,
+                          options = layersControlOptions(collapsed = TRUE)) %>% hideGroup("Batimetria")
+
+          
 
 ```
 
